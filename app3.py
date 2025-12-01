@@ -9,7 +9,7 @@ import os
 # Load Saved Model and Required Objects
 # -----------------------------------------
 
-MODEL_URL = "https://drive.google.com/uc?id=1MfVYKhPdF-jiTjpxoiNqM-beUHBjpaaU"
+MODEL_URL = "https://drive.google.com/uc?id=1MfVYKhPdF-jiTjpxoiNqM-beUHBjpaaU&confirm=t"
 MODEL_PATH = "tuned_logreg_pipeline.joblib"
 
 @st.cache_resource
@@ -170,4 +170,5 @@ if st.button("Predict Severity"):
     st.dataframe(contrib_logreg_df)
 
     st.info("Higher absolute values indicate stronger influence on the final prediction.")
+
 
