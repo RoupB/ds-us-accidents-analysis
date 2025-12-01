@@ -9,14 +9,16 @@ import os
 # Load Saved Model and Required Objects
 # -----------------------------------------
 
-MODEL_URL = "https://drive.google.com/uc?id=1MfVYKhPdF-jiTjpxoiNqM-beUHBjpaaU&confirm=t"
+MODEL_URL = "https://huggingface.co/Roupyajay/us_accident_predictions/blob/main/tuned_logreg_pipeline2.joblib"
 MODEL_PATH = "tuned_logreg_pipeline.joblib"
 
 @st.cache_resource
 def load_model():
     if not os.path.exists(MODEL_PATH):
-        with st.spinner("Downloading model... Please wait"):
-            gdown.download(MODEL_URL, MODEL_PATH, fuzzy=True, quiet=False)
+        with st.spinner("Downloading model from HuggingFace... Please wait"):
+            response = requests.get(MODEL_URL)
+            with open(MODEL_PATH, "wb") as f:
+                f.write(response.content)
     return joblib.load(MODEL_PATH)
 
 
@@ -170,6 +172,7 @@ if st.button("Predict Severity"):
     st.dataframe(contrib_logreg_df)
 
     st.info("Higher absolute values indicate stronger influence on the final prediction.")
+
 
 
 
