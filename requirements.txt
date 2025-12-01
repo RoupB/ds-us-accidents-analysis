@@ -1,5 +1,5 @@
-streamlit==1.51.0
-scikit-learn==1.4.2
+streamlit
+scikit-learn
 joblib
 requests
 imbalanced-learn
