@@ -16,7 +16,7 @@ MODEL_PATH = "tuned_logreg_pipeline.joblib"
 def load_model():
     if not os.path.exists(MODEL_PATH):
         with st.spinner("Downloading model... Please wait"):
-            gdown.download(MODEL_URL, MODEL_PATH, quiet=False)
+            gdown.download(MODEL_URL, MODEL_PATH, fuzzy=True, quiet=False)
     return joblib.load(MODEL_PATH)
 
 
@@ -170,5 +170,6 @@ if st.button("Predict Severity"):
     st.dataframe(contrib_logreg_df)
 
     st.info("Higher absolute values indicate stronger influence on the final prediction.")
+
 
 
