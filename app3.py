@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import joblib
-import gdown
+import requests
 import os
 
 # -----------------------------------------
@@ -172,7 +172,3 @@ if st.button("Predict Severity"):
     st.dataframe(contrib_logreg_df)
 
     st.info("Higher absolute values indicate stronger influence on the final prediction.")
-
-
-
-
