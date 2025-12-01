@@ -9,8 +9,8 @@ import os
 # Load Saved Model and Required Objects
 # -----------------------------------------
 
-MODEL_URL = "https://drive.google.com/uc?id=1orxpg8nWpQEST_HcO7iIf80QocEkXk77"
-MODEL_PATH = "tuned_logreg_pipeline.joblib"
+MODEL_URL = "https://drive.google.com/uc?id=1MfVYKhPdF-jiTjpxoiNqM-beUHBjpaaU"
+MODEL_PATH = "tuned_logreg_pipeline2.joblib"
 
 @st.cache_resource
 def load_model():
@@ -20,7 +20,6 @@ def load_model():
     return joblib.load(MODEL_PATH)
 
 model = load_model()
-
 # Extract internal parts
 preprocessor = model.named_steps["preprocessor"]
 selector = model.named_steps["feature_selection"]
@@ -67,6 +66,7 @@ bool_cols = ['Amenity','Bump','Crossing','Give_Way','Junction','No_Exit','Railwa
 cat_cols = ['Weather_Condition','Sunrise_Sunset','Civil_Twilight',
             'Nautical_Twilight','Astronomical_Twilight']
 
+season_cols = ['month','dayofweek','is_weekend','season','is_pandemic']
 # Weather categories as used in training
 weather_top10 = ['Fair', 'Cloudy', 'Mostly Cloudy', 'Partly Cloudy', 'Light Rain',
                  'Rain', 'Fog', 'Heavy Rain', 'Snow', 'Scattered Clouds', 'Other']
@@ -87,6 +87,18 @@ for c in cat_cols:
         user_data[c] = select_input(c, weather_top10)
     else:
         user_data[c] = select_input(c, ["Day", "Night", "Other"])
+
+st.subheader("Sessonal Inputs")
+for c in season_cols:
+    if c == "is_weekend" or c=='is_pandemic':
+        user_data[c] = st.selectbox(c, [0, 1], index=0)
+    elif c == 'dayofweek':
+        user_data[c] = st.selectbox(c, [0, 1,2,3,4,5,6], index=0)
+    elif c == 'month':
+        user_data[c] = st.selectbox(c, [1,2,3,4,5,6,7,8,9,10,11,12], index=0)
+    elif c == 'season':
+        user_data[c] = st.selectbox(c, [1,2,3,4], index=0)
+
 
 # Convert to DataFrame
 input_df = pd.DataFrame([user_data])
@@ -126,7 +138,7 @@ if st.button("Predict Severity"):
     st.subheader("Meta-Learner Contributions (Stacking Level)")
 
     coef_matrix = meta_clf.coef_
-    meta_cols = [f"Class_{c}" for c in meta_clf.classes_[:-1]]
+    meta_cols = [f"Class_{c}" for c in meta_clf.classes_[:]]
 
     contrib_meta_df = pd.DataFrame(
         coef_matrix.T, index=meta_feature_names, columns=meta_cols
@@ -137,12 +149,12 @@ if st.button("Predict Severity"):
     st.dataframe(contrib_meta_df)
 
     # ---------------- Logistic Regression Base Model ------------
-    st.subheader("Logistic Regression Base Model Contributions")
+    st.subheader("Logistic Regression Base Model Contributions (from training pass)")
 
     logreg = stack_clf.named_estimators_["logreg"]
     logreg_coef = logreg.coef_
 
-    logreg_cols = [f"Class_{c}" for c in logreg.classes_[:-1]]
+    logreg_cols = [f"Class_{c}" for c in logreg.classes_[:]]
 
     contrib_logreg_df = pd.DataFrame(
         logreg_coef.T,
