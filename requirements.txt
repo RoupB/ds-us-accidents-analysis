@@ -1,8 +1,8 @@
-streamlit
+streamlit==1.51.0
+scikit-learn==1.4.2
 pandas
 numpy
-scikit-learn
 joblib
-imbalanced-learn
-gdown
+gdown==5.2.0
+imbalanced-learn==0.14.0
 xgboost
