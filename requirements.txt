@@ -1,7 +1,0 @@
-streamlit
-scikit-learn
-joblib
-requests
-imbalanced-learn
-xgboost
-huggingface_hub
