@@ -4,6 +4,7 @@ import numpy as np
 import joblib
 import gdown
 import os
+import zipfile
 
 # -----------------------------------------
 # Load Saved Model and Required Objects
@@ -11,26 +12,37 @@ import os
 
 MODEL_ZIP_URL = "https://drive.google.com/uc?id=12jgakXOR1dOwEvAQWfSjiP5bkNn_IT39"
 MODEL_ZIP_PATH = "tuned_logreg_pipeline2.zip"
-MODEL_PATH = "tuned_logreg_pipeline2.joblib"
+#MODEL_PATH = "tuned_logreg_pipeline2.joblib"
+
+# Auto detect actual filename after unzip
+def detect_model_file():
+    for f in os.listdir("."):
+        if f.endswith(".joblib"):
+            return f
+    return None
 
 @st.cache_resource
 def load_model():
-    import zipfile
 
-    # Step 1 — Download ZIP if not present
-    if not os.path.exists(MODEL_ZIP_PATH) and not os.path.exists(MODEL_PATH):
-        with st.spinner("Downloading large model (~4GB)... Please wait"):
+    # Step 1: Download zip if needed
+    if not os.path.exists(MODEL_ZIP_PATH) and detect_model_file() is None:
+        with st.spinner("Downloading model (~650MB)..."):
             gdown.download(MODEL_ZIP_URL, MODEL_ZIP_PATH, quiet=False)
 
-    # Step 2 — Unzip only if joblib not extracted
-    if not os.path.exists(MODEL_PATH):
-        with st.spinner("Extracting ZIP... (only first time)"):
-            with zipfile.ZipFile(MODEL_ZIP_PATH, "r") as zip_ref:
-                zip_ref.extractall(".")
+    # Step 2: Extract model
+    if detect_model_file() is None:
+        with st.spinner("Extracting ZIP..."):
+            with zipfile.ZipFile(MODEL_ZIP_PATH, "r") as z:
+                z.extractall(".")
 
-    # Step 3 — Load the model
-    with st.spinner("Loading model in memory..."):
-        return joblib.load(MODEL_PATH)
+    model_file = detect_model_file()
+
+    if model_file is None:
+        st.error("❌ No .joblib model found after extraction!")
+        st.stop()
+
+    with st.spinner(f"Loading model: {model_file}"):
+        return joblib.load(model_file)
 
 model = load_model()
 
