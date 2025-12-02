@@ -11,7 +11,7 @@ import os
 
 MODEL_ZIP_URL = "https://drive.google.com/uc?id=12jgakXOR1dOwEvAQWfSjiP5bkNn_IT39"
 MODEL_ZIP_PATH = "model.zip"
-MODEL_PATH = "tuned_logreg_pipeline.joblib"
+MODEL_PATH = "tuned_logreg_pipeline2.joblib"
 
 @st.cache_resource
 def load_model():
@@ -169,3 +169,4 @@ if st.button("Predict Severity"):
     st.dataframe(contrib_logreg_df)
 
     st.info("Higher absolute values indicate stronger influence on the final prediction.")
+
